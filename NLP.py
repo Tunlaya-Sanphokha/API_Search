@@ -25,21 +25,21 @@ class NLP:
     def __init__(self,query,api):
         if api == "api":
             #Build file csv 
-            self.csvfile_input = open('C:\\Users\\User\\Documents\\GitHub\\NLP-Twitter-Analysis\\Data\\'+str(query)+'_Data.csv', 'r',newline='', encoding="utf-8")
+            self.csvfile_input = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(query)+'_Data.csv', 'r',newline='', encoding="utf-8")
             self.csv_reader = csv.reader(self.csvfile_input, delimiter=',')
             
             fieldnames = ['10 ranking','number']
-            self.csvfile_output = open('C:\\Users\\User\\Documents\\GitHub\\NLP-Twitter-Analysis\\Data\\'+str(query)+'_NLP.csv', 'w', newline='', encoding="utf-8")
+            self.csvfile_output = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(query)+'_NLP.csv', 'w', newline='', encoding="utf-8")
             self.writer_output = csv.DictWriter( self.csvfile_output, fieldnames=fieldnames )
             self.writer_output.writeheader()
 
         else:
             #Build file csv 
-            self.csvfile_input = open('C:\\Users\\User\\Documents\\GitHub\\NLP-Twitter-Analysis\\Data\\'+str(query)+'_crawler.csv', 'r',newline='', encoding="utf-8")
+            self.csvfile_input = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(query)+'_crawler.csv', 'r',newline='', encoding="utf-8")
             self.csv_reader = csv.reader(self.csvfile_input, delimiter=',')
             
             fieldnames = ['10 ranking','number']
-            self.csvfile_output = open('C:\\Users\\User\\Documents\\GitHub\\NLP-Twitter-Analysis\\Data\\'+str(query)+'_NLP_crawler.csv', 'w', newline='', encoding="utf-8")
+            self.csvfile_output = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(query)+'_NLP_crawler.csv', 'w', newline='', encoding="utf-8")
             self.writer_output = csv.DictWriter( self.csvfile_output, fieldnames=fieldnames )
             self.writer_output.writeheader()
 

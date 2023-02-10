@@ -207,7 +207,7 @@ class API_thread(QObject): # Class progress bar
         year1, year2 = str(self.date1.year), str(self.date2.year)
         #print(day_1,month1,year1)
     
-        pan = pandas.read_csv('C:\\Users\\User\\Documents\\GitHub\\NLP-Twitter-Analysis\\Data\\' + str(self.data)+'_Data.csv')
+        pan = pandas.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\' + str(self.data)+'_Data.csv')
         if len(day_1) == 1:
             day_1 = '0' + day_1
         if len(day_2) == 1:
@@ -444,8 +444,8 @@ class tweety_search(QWidget):
         chartview.setRenderHint(QPainter.Antialiasing)
 
         self.savepi = QPixmap(chartview.grab())
-        self.savepi.save("C:/Users/User/Documents/GitHub/NLP-Twitter-Analysis/Sentiment_api.png", "PNG")
-        self.bro5.setStyleSheet('border-image:url(C:/Users/User/Documents/GitHub/NLP-Twitter-Analysis/Sentiment_api.png);')
+        self.savepi.save("C:/Users/User/Documents/GitHub/API_Search/Sentiment_api.png", "PNG")
+        self.bro5.setStyleSheet('border-image:url(C:/Users/User/Documents/GitHub/API_Search/Sentiment_api.png);')
 
         with open(str(data)+'_api_sentiment.csv', 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
@@ -453,7 +453,7 @@ class tweety_search(QWidget):
             writer.writerow([pos,neg,neu])
 
     def Link4(self,name):
-        self.bro1.setStyleSheet(f'border-image:url(C:/Users/User/Documents/GitHub/NLP-Twitter-Analysis/{name}_map.png);')
+        self.bro1.setStyleSheet(f'border-image:url(C:/Users/User/Documents/GitHub/API_Search/{name}_map.png);')
         self.pbar.setValue(100)
         time.sleep(1)
         self.pbar.setValue(0)
@@ -462,7 +462,7 @@ class tweety_search(QWidget):
     #10 Ranking word
     def read_file_10rank(self,query):
         self.dic10={}
-        df = pandas.read_csv('C:\\Users\\User\\Documents\\GitHub\\NLP-Twitter-Analysis\\Data\\'+ str(query)+'_NLP.csv')
+        df = pandas.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+ str(query)+'_NLP.csv')
         for colume in df:
             self.dic10[colume]=[]
             for data in df[colume]:
@@ -474,7 +474,7 @@ class tweety_search(QWidget):
 
     #show Graph ranking by pyqchart
     def create_piechart(self,data):
-        pan = pandas.read_csv('C:\\Users\\User\\Documents\\GitHub\\NLP-Twitter-Analysis\\Data\\'+ str(data)+'_NLP.csv')
+        pan = pandas.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+ str(data)+'_NLP.csv')
         se = QPieSeries()
         for i,j in zip(pan['10 ranking'],pan['number']):
             se.append(i,int(j))
@@ -488,8 +488,8 @@ class tweety_search(QWidget):
         chartview.setRenderHint(QPainter.Antialiasing)
 
         self.savepi = QPixmap(chartview.grab())
-        self.savepi.save("C:/Users/User/Documents/GitHub/NLP-Twitter-Analysis/10_Rank_API.png", "PNG")
-        self.bro3.setStyleSheet('border-image:url(C:/Users/User/Documents/GitHub/NLP-Twitter-Analysis/10_Rank_API.png);')
+        self.savepi.save("C:/Users/User/Documents/GitHub/API_Search/10_Rank_API.png", "PNG")
+        self.bro3.setStyleSheet('border-image:url(C:/Users/User/Documents/GitHub/API_Search/10_Rank_API.png);')
 
     #Show and Exit
     def show_exit(self):

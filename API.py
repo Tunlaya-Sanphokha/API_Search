@@ -34,7 +34,7 @@ class Twitter_API():
         #self.api = tweepy.API(self.auth,wait_on_rate_limit=True)
         # Write file .csv for checking and record infor
         fieldnames = ['time', 'places', 'tweet']
-        self.csvfile = open('C:\\Users\\User\\Documents\\GitHub\\NLP-Twitter-Analysis\\Data\\'+ str(query)+'_Data.csv', 'a', newline='', encoding="utf-8")
+        self.csvfile = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+ str(query)+'_Data.csv', 'a', newline='', encoding="utf-8")
         self.writer = csv.DictWriter( self.csvfile, fieldnames=fieldnames )
         self.writer.writeheader()
 
