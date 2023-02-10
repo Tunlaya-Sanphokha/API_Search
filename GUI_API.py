@@ -277,7 +277,7 @@ class tweety_search(QWidget):
     #creating title QMainWindow
     def Creater(self):
         self.setWindowTitle("Tweet search")
-        self.setStyleSheet("background-color: #FFE5CC;")   #set background color
+        self.setStyleSheet("background-color: #B0C4DE;")   #set background color
         self.resize(1780,920)
         self.move(50,50)
 
@@ -438,7 +438,7 @@ class tweety_search(QWidget):
         chart = QChart()
         chart.addSeries(se)
         chart.setTitle("Sentiment"+str(data))
-        chart.setTheme(QChart.ChartThemeBrownSand)
+        #chart.setTheme(QChart.ChartThemeBrownSand)
         chartview = QChartView(chart)
         chartview.setGeometry(0,0,600,500)
         chartview.setRenderHint(QPainter.Antialiasing)
@@ -482,7 +482,7 @@ class tweety_search(QWidget):
         chart = QChart()
         chart.addSeries(se)
         chart.setTitle("Programming Pie Chart")
-        chart.setTheme(QChart.ChartThemeBrownSand)
+        #chart.setTheme(QChart.ChartThemeBrownSand)
         chartview = QChartView(chart)
         chartview.setGeometry(0,0,650,500)
         chartview.setRenderHint(QPainter.Antialiasing)
