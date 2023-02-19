@@ -10,7 +10,7 @@ import spacy
 from nltk.corpus import stopwords
 import csv
 from spacy.lang.en.stop_words import STOP_WORDS
-from pythainlp import *
+from pythainlp import*
 from pythainlp.corpus import*
 import pandas
 import re
@@ -22,42 +22,32 @@ import shutil
 import en_core_web_sm
 
 class NLP:
-    def __init__(self,query,api):
-        if api == "api":
-            #Build file csv 
-            self.csvfile_input = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(query)+'_Data.csv', 'r',newline='', encoding="utf-8")
-            self.csv_reader = csv.reader(self.csvfile_input, delimiter=',')
+    def __init__(self,query):
+        #Build file csv 
+        self.csvfile_input = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(query)+'_Data.csv', 'r',newline='', encoding="utf-8")
+        self.csv_reader = csv.reader(self.csvfile_input, delimiter=',')
             
-            fieldnames = ['10 ranking','number']
-            self.csvfile_output = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(query)+'_NLP.csv', 'w', newline='', encoding="utf-8")
-            self.writer_output = csv.DictWriter( self.csvfile_output, fieldnames=fieldnames )
-            self.writer_output.writeheader()
+        fieldnames = ['10 ranking','number']
+        self.csvfile_output = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(query)+'_NLP.csv', 'w', newline='', encoding="utf-8")
+        self.writer_output = csv.DictWriter( self.csvfile_output, fieldnames=fieldnames )
+        self.writer_output.writeheader()
 
-        else:
-            #Build file csv 
-            self.csvfile_input = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(query)+'_crawler.csv', 'r',newline='', encoding="utf-8")
-            self.csv_reader = csv.reader(self.csvfile_input, delimiter=',')
-            
-            fieldnames = ['10 ranking','number']
-            self.csvfile_output = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(query)+'_NLP_crawler.csv', 'w', newline='', encoding="utf-8")
-            self.writer_output = csv.DictWriter( self.csvfile_output, fieldnames=fieldnames )
-            self.writer_output.writeheader()
 
     #select th or en word to analysis and count them
-    def save_analysis(self, lang, data , api):
+    def save_analysis(self, lang, data):
         dict_temp = {}
         first = 0
         self.nlp = en_core_web_sm.load()
-        #self.nlp = spacy.load("en_core_web_md")
+        
         for row in self.csv_reader:
             print(first)
             if(first > 0):
                 if(lang == "th"):
-                    temp = self.analyze_word_th(row[2],data)
+                    temp = self.analyze_word_th(row[2],data)  #ทำงานใน functionนี้มาเก็บใน temp
                 elif(lang == "en"):
                     temp = self.analyze_word_en(row[2],data)
 
-                for i in temp:
+                for i in temp:  #ได้temp มาแล้วก็เอามา วนนับ
                     message = i.lower()
                     if( message not in dict_temp ):
                         dict_temp[message] = 1
@@ -66,24 +56,24 @@ class NLP:
                 if(first == 5):
                     break
             first += 1
-        self.dict_sort = self.bubbleSort(dict_temp,data)
+        self.dict_sort = self.bubbleSort(dict_temp) #ได้temp มาแล้วก็เอามา วน10คำ
         for temp in self.dict_sort:
             self.writer_output.writerow({'10 ranking':temp, 'number':dict_temp[temp]})
         self.csvfile_output.close()
         self.csvfile_input.close()
-        #self.re_search(data, api)
+        self.re_search(data)
 
     #analysis th word
     def analyze_word_th(self, data , search):
-        words = thai_stopwords()
+        words = thai_stopwords()  #ตัดคำฟุ่มเฟือย พวกสระเกิน
         V = []
-        data = re.sub("[0-9]",'',data)
-        data = re.sub("[a-z A-Z]",'',data)
-        nlp = word_tokenize(data , engine='newmm',keep_whitespace=False)
-        nlp1 = [data for data in nlp if data not in words]
+        data = re.sub("[0-9]",'',data)  #ใช้ regular ตัด 0-9 ออก
+        data = re.sub("[a-z A-Z]",'',data) #ใช้ re ตัด  A-Z
+        nlp = word_tokenize(data , engine='newmm',keep_whitespace=False)  #เก็บข้อมูลคล้าย อาเรย์?
+        nlp1 = [data for data in nlp if data not in words] #เอาข้อมูลที่คลีนแล้ว ?
         for i in nlp1:
             r = re.sub('\w','',i)
-            if i != search:
+            if i != search:     #ไม่เอาที่จะ query
                 if i not in r and data:
                     V.append(i)
         return V
@@ -125,31 +115,29 @@ class NLP:
         else:
             return False
 
-    def bubbleSort(self, dict_temp,data):
+    def bubbleSort(self, dict_temp):
         first = 0
         key = [i for i in dict_temp.keys()]
-        value = [i for i in dict_temp.values()]
+        value = [i for i in dict_temp.values()] #เก็บค่าที่ถูกนับ
         sort = {}
         for f in range(len(value)): 
             for s in range(len(value)-f-1): 
                 if value[f] <= value[f+s] : 
                     value[f], value[f+s] = value[f+s], value[f]
-                    key[f], key[f+s] = key[f+s], key[f]
+                    key[f], key[f+s] = key[f+s], key[f]   #สลับตำแหน่ง value 
         for fi in range(len(dict_temp)):
             if first < 10:
                 sort[key[fi]] = value[fi]
                 first += 1
 
         return sort
-"""
-    def re_search(self,data,api):
+    #research ข้อมูล
+    def re_search(self,data):
         now = datetime.now()
         date_time = now.strftime("%Y-%m-%d %H:%M:%S")
         headers = ["update_time",'file_name']
-        if api == 'api':
-            file_name = 'file_list_API.csv'
-        else:
-            file_name = 'file_list_Crawler.csv'
+        file_name = 'file_list_API.csv'
+
 
         try:
             csvfile = open(file_name, 'r', encoding="utf8")
@@ -158,7 +146,7 @@ class NLP:
             tempfile = NamedTemporaryFile(mode='w', delete=False, newline='',encoding='utf-8')
             writer_re = csv.DictWriter(tempfile, fieldnames=headers)
             writer_re.writeheader()
-
+            print("111111111111111")
             first = 0
             n = []
             for row in reader:
@@ -177,8 +165,9 @@ class NLP:
             csvfile.close()
 
             shutil.move(tempfile.name, file_name)
-
+            
         except FileNotFoundError:
+            print("2222222222222")
             csvfile = open(file_name, 'w', newline='', encoding="utf8")
             writer = csv.DictWriter(csvfile, fieldnames=headers)
             writer.writeheader()
@@ -187,15 +176,15 @@ class NLP:
             writer = csv.DictWriter(csvfile, fieldnames=headers)
             writer.writerow( {'update_time':date_time, 'file_name':str(data)+'.csv'} )
             csvfile.close()
-"""
+            
 if __name__ == "__main__":
     
     class Unit_test(unittest.TestCase):
         def test_NLP(self):
-            obj = NLP('ดาว','api')
-            obj.save_analysis('th','ดาว','api')
+            obj = NLP('Alien')
+            obj.save_analysis('en','Alien')
             self.assertIsNotNone(obj)
 
-    #start = time.time()
+    start = time.time()
     unittest.main()
-    #print( int(time.time() - start) )
+    print( int(time.time() - start) )

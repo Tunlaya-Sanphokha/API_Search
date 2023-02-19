@@ -38,7 +38,7 @@ class Twitter_API():
         self.writer = csv.DictWriter( self.csvfile, fieldnames=fieldnames )
         self.writer.writeheader()
 
-    def search(self): #Function search word timezone ไม่ห้เหลื่อมกัน 
+    def search(self): #Function search word timezone ไม่เหลื่อมเวลากัน 
         start = 0    
         maxId = -1
         Inmediat = 0  

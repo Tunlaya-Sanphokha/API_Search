@@ -68,8 +68,8 @@ class API_thread(QObject): # Class progress bar
             obj = Twitter_API(self.data,self.slide,self.date1,self.date2) #ดึงข้อมูลจาก Class
             obj.search()
             print("This one :"+self.data)
-            self.obj1 = NLP(self.data,'api')
-            self.obj1.save_analysis(self.slide,self.data,'api')
+            self.obj1 = NLP(self.data)
+            self.obj1.save_analysis(self.slide,self.data)
             self.signal1.emit(self.data)
             self.get_time()
 
@@ -138,12 +138,12 @@ class API_thread(QObject): # Class progress bar
         tol = pos + neg + neu
 
         self.signal3.emit(self.data,pos,neg,neu,tol)
-
-    """def geopy(self):
+    """
+    def geopy(self):
 
         geolocator = Nominatim(user_agent="sample app")
         headers = ['Address', 'Lat', 'Lon']
-        file_name = 'C:\\Users\\User\\Documents\\GitHub\\Search_word\\' + str(self.data)+'_map.csv'
+        file_name = 'C:\\Users\\User\\Documents\\GitHub\\API_Search\\' + str(self.data)+'_map.csv'
 
         for i in self.df['places']:
             try:
@@ -173,7 +173,7 @@ class API_thread(QObject): # Class progress bar
                 print('3')
                 pass
         try:
-            df = pd.read_csv('C:\\Users\\User\\Documents\\GitHub\\Search_word\\' + str(self.data)+'_map.csv')
+            df = pd.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\' + str(self.data)+'_map.csv')
             fig = px.scatter_geo(df, 
                                 # longitude is taken from the df["lon"] columns and latitude from df["lat"]
                                 lon="Lon", 
@@ -194,14 +194,13 @@ class API_thread(QObject): # Class progress bar
             fig.update_geos(fitbounds="locations", showcountries = True)
             # add title
             fig.update_layout(title = 'Your customers')
-            fig.write_image(f"C:/Users/User/Documents/GitHub/Search_word/{self.data}_map.png")
+            fig.write_image(f"C:/Users/User/Documents/GitHub/API_Search/{self.data}_map.png")
             self.signal4.emit(self.data)
         except FileNotFoundError:
             pass
-"""
-
+        """
+    
     def get_time(self): # Function Get time from dateEdit
-
         day_1,day_2 = str(self.date1.day), str(self.date2.day)
         month1,month2 = str(self.date1.month), str(self.date2.month)
         year1, year2 = str(self.date1.year), str(self.date2.year)
@@ -222,7 +221,7 @@ class API_thread(QObject): # Class progress bar
         between = pan[colume1 & colume2]
         self.df = pd.DataFrame({'time': between['time'],'tweet': between['tweet'],'places': between['places']})
         print(self.df)
-        if re.match('[ก-๙]',self.data) != None:
+        if re.match('[ก-๙]',self.data) != None:    #ถ้าเป็นไทยก็ดึง ข้อมูล sentiment มาแต่ยังไม่ได้แสดง  10 range
             self.signal1.emit(self.data)
             self.Sentiment_pickel()
             self.signal2.emit(self.df.sort_values(by="time"))
@@ -263,7 +262,7 @@ class tweety_search(QWidget):
         self.worker.signal1.connect(self.Link)
         self.worker.signal2.connect(self.Link2)
         self.worker.signal3.connect(self.Link3)
-        self.worker.signal4.connect(self.Link4)
+        #self.worker.signal4.connect(self.Link4)
         self.button.setEnabled(False)
 
         self.thread.start()
@@ -417,11 +416,16 @@ class tweety_search(QWidget):
         self.create_piechart(data)
         self.pbar.setValue(20)
 
+    #การวาดตาราง
     def Link2(self,df):
         model = pandasModel(df)
         self.view.setModel(model)
         self.pbar.setValue(80)
-
+        self.pbar.setValue(100)
+        time.sleep(1)
+        self.pbar.setValue(0)
+        self.button.setEnabled(True)
+    
     def Link3(self,data,pos,neg,neu,tol):
         se = QPieSeries()
 
@@ -451,13 +455,14 @@ class tweety_search(QWidget):
             writer = csv.writer(f)
             writer.writerow(['pos','neg','neu'])
             writer.writerow([pos,neg,neu])
+        
 
-    def Link4(self,name):
+    """def Link4(self,name)
         self.bro1.setStyleSheet(f'border-image:url(C:/Users/User/Documents/GitHub/API_Search/{name}_map.png);')
         self.pbar.setValue(100)
         time.sleep(1)
         self.pbar.setValue(0)
-        self.button.setEnabled(True)
+        self.button.setEnabled(True)"""
 
     #10 Ranking word
     def read_file_10rank(self,query):
