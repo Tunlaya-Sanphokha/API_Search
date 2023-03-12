@@ -1,11 +1,8 @@
  # Refference https://www.youtube.com/watch?v=ae62pHnBdAg&ab_channel=BorntoDev
 
 import tweepy
-import unittest
 import csv
-import pandas
-from datetime import *  #เอามาทำเวลา
-from geopy.geocoders import Nominatim 
+from datetime import *  #เอามาทำเวลา 
 import configparser
 
 class Twitter_API():
@@ -102,8 +99,25 @@ class Twitter_API():
             if(  (not infor.retweeted) and ("RT @" not in infor.full_text)  ):
                 self.writer.writerow( {'time': str(infor.created_at), 'places': infor.user.location, 'tweet':infor.full_text} )
         return True
+    
+    #Top Treand Twitter
+    def TopTreand(self):
+        api = tweepy.API(self.auth)
+        woeid = 23424960
+        trends = api.trends_place(woeid)
+        fieldnames = ['tweet_volume', 'url', 'query', 'name', 'promoted_content']
+        csvfile_output = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\10_TopTreand.csv', 'w', newline='', encoding="utf-8")
+        writer_output = csv.DictWriter(csvfile_output, fieldnames=fieldnames )
+        writer_output.writeheader()
+        for value in trends:
+            for trend in value['trends'][:10]:
+                writer_output.writerow(trend)
+                print(trend["name"])
+        csvfile_output.close()
+
 
 if __name__ == "__main__":
 
-    obj = Twitter_API("ดาว","th","2023-02-10","2023-02-11")
+    obj = Twitter_API("นอน","th","2023-03-04","2023-03-07")
     obj.search()
+    obj.TopTreand()

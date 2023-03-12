@@ -8,15 +8,12 @@ from PyQt5.QtCore import*
 from PyQt5 import *
 
 import pandas as pd
-import os
 import os.path, time
 import unittest
 from datetime import time
 from textblob import TextBlob
 import matplotlib.pyplot as plt
 from tempfile import NamedTemporaryFile
-import shutil
-import codecs
 from itertools import chain
 from nltk import NaiveBayesClassifier as nbc
 from geopy.geocoders import Nominatim
@@ -58,7 +55,6 @@ class API_thread(QObject): # Class progress bar
         self.date2 = date2
     
     def check_search(self): # Fucntion check search word
-
         pan = pandas.read_csv('file_list_API.csv')
         check = str(self.data)+'.csv'
         store_file = []
@@ -270,8 +266,6 @@ class tweety_search(QWidget):
 
         self.button.setEnabled(False)
 
-    def Back(self): #Back to Main GUI
-        self.switch_window.emit()
 
     #creating title QMainWindow
     def Creater(self):
@@ -300,12 +294,7 @@ class tweety_search(QWidget):
         self.button.clicked.connect(self.getTextValue)
         self.button.setFont(QtGui.QFont("Helvetica",14))
 
-        """#creating button QPushButton
-        self.button3 = QPushButton("Back",self)
-        self.button3.resize(150,80)
-        self.button3.move(1600,800)
-        self.button3.clicked.connect(self.Back)
-        self.button3.setFont(QtGui.QFont("Helvetica",14))"""
+
 
         #set icon window
         self.icon = QtGui.QIcon()
@@ -321,8 +310,8 @@ class tweety_search(QWidget):
         self.label_2.move(20,150)
         self.label_2.setFont(QtGui.QFont("Helvetica",16))
         #QLabel4
-        self.label_3 = QLabel('Map',self)
-        self.label_3.move(650,470)
+        self.label_3 = QLabel('Top Treand#',self)
+        self.label_3.move(640,470)
         self.label_3.setFont(QtGui.QFont("Helvetica",16))
         #QLabel5
         self.label_5 = QLabel('Ranking Graph',self)
@@ -349,12 +338,14 @@ class tweety_search(QWidget):
         self.slide.move(280,150)
         self.slide.setFont(QtGui.QFont("Helvetica",16))
 
-        #TextBrowser Map
+        #TextBrowser Top Trend
         self.bro1 = QTextBrowser(self)
         self.bro1.setStyleSheet("background-color: #FFFFFF;")
-        self.bro1.resize(800,450)
-        self.bro1.move(720,460)
+        self.bro1.resize(700,450)
+        self.bro1.move(800,460)
         self.bro1.setFont(QtGui.QFont("Helvetica",12))
+        self.read_file_TopTreand()
+
         #TextBrowser show rang top 10 
         self.bro2 = QTextBrowser(self)
         self.bro2.setStyleSheet("background-color: #FFFFFF;")
@@ -410,7 +401,7 @@ class tweety_search(QWidget):
         self.view.setStyleSheet("background-color: #FFFFFF;")
         self.view.resize(600,500)
         self.view.move(10,350)
-
+    #show 10rank
     def Link(self,data):
         self.read_file_10rank(data)
         self.create_piechart(data)
@@ -428,7 +419,6 @@ class tweety_search(QWidget):
     
     def Link3(self,data,pos,neg,neu,tol):
         se = QPieSeries()
-
         se.append('Positive',int(pos))
         se.append('Negative',int(neg))
         se.append('Neutral',int(neu))
@@ -463,7 +453,12 @@ class tweety_search(QWidget):
         time.sleep(1)
         self.pbar.setValue(0)
         self.button.setEnabled(True)"""
-
+    
+    #show Top 10 Treand
+    def Link4(self):
+        self.read_file_TopTreand()
+        self.pbar.setValue(20)
+    
     #10 Ranking word
     def read_file_10rank(self,query):
         self.dic10={}
@@ -476,6 +471,16 @@ class tweety_search(QWidget):
         self.bro2.append('10 Ranking word')
         for word in self.dic10['10 ranking']:
             self.bro2.append(word)
+
+    #Top 10 Treand
+    def read_file_TopTreand(self):
+        up_top = Twitter_API("","","2023-03-04","2023-03-07")
+        up_top.TopTreand()
+        pannie = pandas.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\10_TopTreand.csv')
+        self.bro1.clear()
+        for i in pannie["name"]:
+            self.bro1.append(i)
+
 
     #show Graph ranking by pyqchart
     def create_piechart(self,data):
