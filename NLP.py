@@ -133,6 +133,7 @@ class NLP:
         return sort
     #research ข้อมูล
     def re_search(self,data):
+        #research
         now = datetime.now()
         date_time = now.strftime("%Y-%m-%d %H:%M:%S")
         headers = ["update_time",'file_name']
@@ -176,6 +177,7 @@ class NLP:
             writer = csv.DictWriter(csvfile, fieldnames=headers)
             writer.writerow( {'update_time':date_time, 'file_name':str(data)+'.csv'} )
             csvfile.close()
+
             
 if __name__ == "__main__":
     

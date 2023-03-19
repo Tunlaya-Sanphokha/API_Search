@@ -271,7 +271,7 @@ class tweety_search(QWidget):
     def Creater(self):
         self.setWindowTitle("Tweet search")
         self.setStyleSheet("background-color: #B0C4DE;")   #set background color
-        self.resize(1780,920)
+        self.resize(1780,990)
         self.move(50,50)
 
         #creating box QLineEdit
@@ -310,8 +310,12 @@ class tweety_search(QWidget):
         self.label_2.move(20,150)
         self.label_2.setFont(QtGui.QFont("Helvetica",16))
         #QLabel4
-        self.label_3 = QLabel('Top Treand#',self)
-        self.label_3.move(640,470)
+        self.label_3 = QLabel('Top Treand',self)
+        self.label_3.move(1360,565)
+        self.label_3.setFont(QtGui.QFont("Helvetica",16))
+        #QLabeMap
+        self.label_3 = QLabel('MAP',self)
+        self.label_3.move(650,470)
         self.label_3.setFont(QtGui.QFont("Helvetica",16))
         #QLabel5
         self.label_5 = QLabel('Ranking Graph',self)
@@ -337,27 +341,36 @@ class tweety_search(QWidget):
         self.slide.addItem('en')
         self.slide.move(280,150)
         self.slide.setFont(QtGui.QFont("Helvetica",16))
-
-        #TextBrowser Top Trend
+        
+        #TextBrowser Top Trend วางในช่อง
         self.bro1 = QTextBrowser(self)
         self.bro1.setStyleSheet("background-color: #FFFFFF;")
-        self.bro1.resize(700,450)
-        self.bro1.move(800,460)
+        self.bro1.resize(380,300)
+        self.bro1.move(1390,600)
         self.bro1.setFont(QtGui.QFont("Helvetica",12))
-        self.read_file_TopTreand()
+        self.read_file_TopTreand()   #อ่านค่า Top Trend ที่ดึงได้
 
+        #TextBrowser MAP 
+        self.map = QTextBrowser(self)
+        self.map.setStyleSheet("background-color: #FFFFFF;")
+        self.map.resize(700,450)
+        self.map.move(640,500)
+        self.map.setFont(QtGui.QFont("Helvetica",12))
+        
         #TextBrowser show rang top 10 
         self.bro2 = QTextBrowser(self)
         self.bro2.setStyleSheet("background-color: #FFFFFF;")
         self.bro2.resize(200,280)
         self.bro2.move(1100,50)
         self.bro2.setFont(QtGui.QFont("Helvetica",12))
+
         #TextBrowser show pie graph top 10
         self.bro3 = QTextBrowser(self)
         self.bro3.setStyleSheet("background-color: #FFFFFF;")
         self.bro3.resize(450,400)
         self.bro3.move(650,50)
         self.bro3.setFont(QtGui.QFont("Helvetica",12))
+
         #TextBrower show pie graph sentiment
         self.bro5 = QTextBrowser(self)
         self.bro5.setStyleSheet("background-color: #FFFFFF;")
@@ -401,6 +414,7 @@ class tweety_search(QWidget):
         self.view.setStyleSheet("background-color: #FFFFFF;")
         self.view.resize(600,500)
         self.view.move(10,350)
+        
     #show 10rank
     def Link(self,data):
         self.read_file_10rank(data)
@@ -447,17 +461,17 @@ class tweety_search(QWidget):
             writer.writerow([pos,neg,neu])
         
 
-    """def Link4(self,name)
+    """def Link4(self,name)  #link map
         self.bro1.setStyleSheet(f'border-image:url(C:/Users/User/Documents/GitHub/API_Search/{name}_map.png);')
         self.pbar.setValue(100)
         time.sleep(1)
         self.pbar.setValue(0)
         self.button.setEnabled(True)"""
     
-    #show Top 10 Treand
-    def Link4(self):
+    #show Top 10 Treand   Link with Top Treand
+    def Link4(self): 
         self.read_file_TopTreand()
-        self.pbar.setValue(20)
+        self.pbar.setValue(20) 
     
     #10 Ranking word
     def read_file_10rank(self,query):
@@ -472,7 +486,7 @@ class tweety_search(QWidget):
         for word in self.dic10['10 ranking']:
             self.bro2.append(word)
 
-    #Top 10 Treand
+    #Top 10 Treand  read value file Toptreand from API.py
     def read_file_TopTreand(self):
         up_top = Twitter_API("","","2023-03-04","2023-03-07")
         up_top.TopTreand()
@@ -526,7 +540,9 @@ class pandasModel(QAbstractTableModel): #Class for creat AbstractTableModel
     def headerData(self, col, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return self._data.columns[col]
-        return None 
+        return None
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
