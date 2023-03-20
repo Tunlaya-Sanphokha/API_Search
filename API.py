@@ -118,6 +118,6 @@ class Twitter_API():
 
 if __name__ == "__main__":
 
-    obj = Twitter_API("นอน","th","2023-03-04","2023-03-07")
+    obj = Twitter_API("eversoul","en","2023-03-19","2023-03-20")
     obj.search()
     obj.TopTreand()

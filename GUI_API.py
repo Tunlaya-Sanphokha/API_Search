@@ -6,8 +6,7 @@ from PyQt5.QtChart import*
 from PyQt5.QtGui import*
 from PyQt5.QtCore import*
 from PyQt5 import *
-
-import pandas as pd
+import pandas
 import os.path, time
 import unittest
 from datetime import time
@@ -64,12 +63,14 @@ class API_thread(QObject): # Class progress bar
             obj = Twitter_API(self.data,self.slide,self.date1,self.date2) #ดึงข้อมูลจาก Class
             obj.search()
             print("This one :"+self.data)
-            self.obj1 = NLP(self.data)
-            self.obj1.save_analysis(self.slide,self.data)
+            self.nlp = NLP()
+            self.nlp.save_analysis(self.slide,self.data,self.date1,self.date2)
             self.signal1.emit(self.data)
             self.get_time()
 
         else :
+            self.nlp = NLP()
+            self.nlp.update_time(self.slide,self.data,self.date1,self.date2)
             self.get_time()
 
         self.finished.emit()
@@ -169,7 +170,7 @@ class API_thread(QObject): # Class progress bar
                 print('3')
                 pass
         try:
-            df = pd.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\' + str(self.data)+'_map.csv')
+            df = pandas.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\' + str(self.data)+'_map.csv')
             fig = px.scatter_geo(df, 
                                 # longitude is taken from the df["lon"] columns and latitude from df["lat"]
                                 lon="Lon", 
@@ -200,9 +201,8 @@ class API_thread(QObject): # Class progress bar
         day_1,day_2 = str(self.date1.day), str(self.date2.day)
         month1,month2 = str(self.date1.month), str(self.date2.month)
         year1, year2 = str(self.date1.year), str(self.date2.year)
-        #print(day_1,month1,year1)
-    
         pan = pandas.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\' + str(self.data)+'_Data.csv')
+        
         if len(day_1) == 1:
             day_1 = '0' + day_1
         if len(day_2) == 1:
@@ -215,7 +215,7 @@ class API_thread(QObject): # Class progress bar
         colume1 = pan['time'] >= f'{year1}-{month1}-{day_1} 00:00:00'
         colume2 = pan['time'] <= f'{year2}-{month2}-{day_2} 23:59:59'
         between = pan[colume1 & colume2]
-        self.df = pd.DataFrame({'time': between['time'],'tweet': between['tweet'],'places': between['places']})
+        self.df = pandas.DataFrame({'time': between['time'],'tweet': between['tweet'],'places': between['places']})
         print(self.df)
         if re.match('[ก-๙]',self.data) != None:    #ถ้าเป็นไทยก็ดึง ข้อมูล sentiment มาแต่ยังไม่ได้แสดง  10 range
             self.signal1.emit(self.data)
@@ -341,6 +341,14 @@ class tweety_search(QWidget):
         self.slide.addItem('en')
         self.slide.move(280,150)
         self.slide.setFont(QtGui.QFont("Helvetica",16))
+
+        #Button Remove
+        self.button1 = QPushButton("Remove",self)
+        self.button1.setStyleSheet("background-color: #FFB266;")
+        self.button1.resize(100,30)
+        self.button1.move(220,260)
+        self.button1.clicked.connect(self.remove_word)   #เชื่อม function remove
+        self.button1.setFont(QtGui.QFont("Helvetica",14)) 
         
         #TextBrowser Top Trend วางในช่อง
         self.bro1 = QTextBrowser(self)
@@ -427,7 +435,6 @@ class tweety_search(QWidget):
         self.view.setModel(model)
         self.pbar.setValue(80)
         self.pbar.setValue(100)
-        time.sleep(1)
         self.pbar.setValue(0)
         self.button.setEnabled(True)
     
@@ -495,6 +502,28 @@ class tweety_search(QWidget):
         for i in pannie["name"]:
             self.bro1.append(i)
 
+    #Remove 
+    def remove_word(self):
+        file = str(self.inputbox.text())
+        data_path = ('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\' + str(file)+'_Data.csv')
+        NLP_path = ('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\' + str(file)+'_NLP.csv')
+        with open('file_list_API.csv', 'rt', encoding='utf-8') as f:
+            reader = csv.reader(f, delimiter=',')
+            for row in reader:
+                for field in row:
+                    if field == (file+'.csv'):
+                        df = pandas.read_csv('file_list_API.csv')
+                        print(df)
+                        df1 = df.drop(df[df['file_name'] == field].index, inplace=False)
+                        result = df1.to_csv("file_list_API.csv", index=False)
+                        print(df1)    
+                        if(os.path.exists(data_path) and os.path.isfile(data_path) and os.path.exists(NLP_path) and os.path.isfile(NLP_path)):
+                            os.remove(data_path)
+                            os.remove(NLP_path)
+                            print("file deleted")
+                        else:
+                            print("file not found")
+
 
     #show Graph ranking by pyqchart
     def create_piechart(self,data):
@@ -541,7 +570,6 @@ class pandasModel(QAbstractTableModel): #Class for creat AbstractTableModel
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return self._data.columns[col]
         return None
-
 
 
 if __name__ == "__main__":

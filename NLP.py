@@ -12,7 +12,7 @@ import csv
 from spacy.lang.en.stop_words import STOP_WORDS
 from pythainlp import*
 from pythainlp.corpus import*
-import pandas
+import pandas as pd
 import re
 import time
 import unittest
@@ -20,21 +20,23 @@ from datetime import datetime
 from tempfile import NamedTemporaryFile
 import shutil
 import en_core_web_sm
+from API import *
 
 class NLP:
-    def __init__(self,query):
-        #Build file csv 
-        self.csvfile_input = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(query)+'_Data.csv', 'r',newline='', encoding="utf-8")
+    def __init__(self):
+        #Build file csv
+        print('hello')
+
+    #select th or en word to analysis and count them
+    def save_analysis(self, lang, data,since,until):
+        self.csvfile_input = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(data)+'_Data.csv', 'r',newline='', encoding="utf-8")
         self.csv_reader = csv.reader(self.csvfile_input, delimiter=',')
             
         fieldnames = ['10 ranking','number']
-        self.csvfile_output = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(query)+'_NLP.csv', 'w', newline='', encoding="utf-8")
+        self.csvfile_output = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(data)+'_NLP.csv', 'w', newline='', encoding="utf-8")
         self.writer_output = csv.DictWriter( self.csvfile_output, fieldnames=fieldnames )
         self.writer_output.writeheader()
 
-
-    #select th or en word to analysis and count them
-    def save_analysis(self, lang, data):
         dict_temp = {}
         first = 0
         self.nlp = en_core_web_sm.load()
@@ -61,7 +63,7 @@ class NLP:
             self.writer_output.writerow({'10 ranking':temp, 'number':dict_temp[temp]})
         self.csvfile_output.close()
         self.csvfile_input.close()
-        self.re_search(data)
+        self.re_search(lang,data,since,until)
 
     #analysis th word
     def analyze_word_th(self, data , search):
@@ -132,14 +134,12 @@ class NLP:
 
         return sort
     #research ข้อมูล
-    def re_search(self,data):
+    def re_search(self,lang,data,since,until):
         #research
         now = datetime.now()
         date_time = now.strftime("%Y-%m-%d %H:%M:%S")
         headers = ["update_time",'file_name']
         file_name = 'file_list_API.csv'
-
-
         try:
             csvfile = open(file_name, 'r', encoding="utf8")
             reader = csv.reader(csvfile, delimiter=',') # Checkink NotFoundError 
@@ -161,7 +161,9 @@ class NLP:
 
             if(str(data)+'.csv' not in n):
                 writer_re.writerow( {'update_time':date_time, 'file_name':str(data)+'.csv'} )
-
+            
+            self.update_time(lang,data,since,until)
+            
             tempfile.close()
             csvfile.close()
 
@@ -178,15 +180,46 @@ class NLP:
             writer.writerow( {'update_time':date_time, 'file_name':str(data)+'.csv'} )
             csvfile.close()
 
-            
+    def update_time(self,lang,data,since,until):
+        D = 'D'
+        time1 = []
+        with open('file_list_API.csv', 'rt', encoding="utf8") as f:
+            reader = csv.reader(f, delimiter=',') # good point by @paco
+            for row in reader:
+                for field in row:
+                    if field == (data+'.csv'):
+
+                        date_list = pd.date_range(since, until, freq=D)
+
+                        # if you want dates in string format then convert it into string
+                        time2 = date_list.strftime("%Y-%m-%d")
+
+                        pan = pd.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\' + str(data)+'_Data.csv')
+                        colume1 = pan['time'] >= f'{since} 00:00:00'
+                        colume2 = pan['time'] <= f'{until} 23:59:59'
+                        between = pan[colume1 & colume2]
+                        df = pd.DataFrame({'time': between['time'],'tweet': between['tweet'],'places': between['places']})
+                        
+                        for i in df['time']:
+                            time1.append(i[:10])
+                        print("time1 =", time1)
+
+                        result1 = list(set(time2) - set(time1))  #หาตัวที่ต่างกันของdf กับ เวลาที่เราต้องการ
+                        result1 = sorted(result1, key=lambda x: datetime.strptime(x, '%Y-%m-%d'))
+                        try: 
+                            print(result1[0])
+                            print(result1[-1])
+                            obj1 = Twitter_API(data,lang,result1[0],result1[-1])
+                            obj1.search()
+                        except IndexError:
+                            print("Do nothing")
+
 if __name__ == "__main__":
     
     class Unit_test(unittest.TestCase):
         def test_NLP(self):
-            obj = NLP('Alien')
-            obj.save_analysis('en','Alien')
+            obj = NLP()
+            obj.save_analysis('en','eversoul','2023-03-12','2023-03-21')
             self.assertIsNotNone(obj)
 
-    start = time.time()
     unittest.main()
-    print( int(time.time() - start) )
