@@ -1,9 +1,9 @@
- # Refference https://www.youtube.com/watch?v=ae62pHnBdAg&ab_channel=BorntoDev
 
 import tweepy
 import csv
 from datetime import *  #เอามาทำเวลา 
 import configparser
+import unittest
 
 class Twitter_API():
 
@@ -118,6 +118,15 @@ class Twitter_API():
 
 if __name__ == "__main__":
 
-    obj = Twitter_API("eversoul","en","2023-03-19","2023-03-20")
+    obj = Twitter_API("eversoul","en","2023-03-19","2023-03-21")
     obj.search()
     obj.TopTreand()
+    
+    
+    class Unit_test(unittest.TestCase):
+        def test_API(self):
+            obj = Twitter_API("eversoul","en","2023-03-19","2023-03-21")
+            obj.search()
+            self.assertIsNotNone(obj)
+
+    unittest.main()

@@ -1,11 +1,3 @@
-# ref: https://stackoverflow.com/questions/43388476/how-could-spacy-tokenize-hashtag-as-a-whole
-# ref: https://universaldependencies.org/docs/u/pos/
-# ref: https://www.dataquest.io/blog/tutorial-text-classification-in-python-using-spacy/
-
-# ref: https://www.geeksforgeeks.org/removing-stop-words-nltk-python/
-# ref: https://medium.com/@m.treerungroj/machine-learning-supervised-learning-with-basic-scikit-learn-part1-99b8b2327c9
-# ref: https://spacy.io/api/pipeline-functions#merge_entities
-# ref: https://spacy.io/api/token
 import spacy
 from nltk.corpus import stopwords
 import csv

@@ -135,7 +135,7 @@ class API_thread(QObject): # Class progress bar
         tol = pos + neg + neu
 
         self.signal3.emit(self.data,pos,neg,neu,tol)
-    """
+    
     def geopy(self):
 
         geolocator = Nominatim(user_agent="sample app")
@@ -195,7 +195,7 @@ class API_thread(QObject): # Class progress bar
             self.signal4.emit(self.data)
         except FileNotFoundError:
             pass
-        """
+        
     
     def get_time(self): # Function Get time from dateEdit
         day_1,day_2 = str(self.date1.day), str(self.date2.day)
@@ -221,12 +221,12 @@ class API_thread(QObject): # Class progress bar
             self.signal1.emit(self.data)
             self.Sentiment_pickel()
             self.signal2.emit(self.df.sort_values(by="time"))
-            #self.geopy()
+            self.geopy()
         else:
             self.signal1.emit(self.data)
             self.Sentiment_en()
             self.signal2.emit(self.df.sort_values(by="time"))
-            #self.geopy()
+            self.geopy()
 
 
 class tweety_search(QWidget):
@@ -258,7 +258,7 @@ class tweety_search(QWidget):
         self.worker.signal1.connect(self.Link)
         self.worker.signal2.connect(self.Link2)
         self.worker.signal3.connect(self.Link3)
-        #self.worker.signal4.connect(self.Link4)
+        self.worker.signal4.connect(self.Link4)
         self.button.setEnabled(False)
 
         self.thread.start()
@@ -434,9 +434,6 @@ class tweety_search(QWidget):
         model = pandasModel(df)
         self.view.setModel(model)
         self.pbar.setValue(80)
-        self.pbar.setValue(100)
-        self.pbar.setValue(0)
-        self.button.setEnabled(True)
     
     def Link3(self,data,pos,neg,neu,tol):
         se = QPieSeries()
@@ -468,17 +465,11 @@ class tweety_search(QWidget):
             writer.writerow([pos,neg,neu])
         
 
-    """def Link4(self,name)  #link map
-        self.bro1.setStyleSheet(f'border-image:url(C:/Users/User/Documents/GitHub/API_Search/{name}_map.png);')
+    def Link4(self,name):  #link map
+        self.map.setStyleSheet(f'border-image:url(C:/Users/User/Documents/GitHub/API_Search/{name}_map.png);')
         self.pbar.setValue(100)
-        time.sleep(1)
         self.pbar.setValue(0)
-        self.button.setEnabled(True)"""
-    
-    #show Top 10 Treand   Link with Top Treand
-    def Link4(self): 
-        self.read_file_TopTreand()
-        self.pbar.setValue(20) 
+        self.button.setEnabled(True)
     
     #10 Ranking word
     def read_file_10rank(self,query):
@@ -516,13 +507,16 @@ class tweety_search(QWidget):
                         print(df)
                         df1 = df.drop(df[df['file_name'] == field].index, inplace=False)
                         result = df1.to_csv("file_list_API.csv", index=False)
-                        print(df1)    
+                        print(result)    
                         if(os.path.exists(data_path) and os.path.isfile(data_path) and os.path.exists(NLP_path) and os.path.isfile(NLP_path)):
                             os.remove(data_path)
                             os.remove(NLP_path)
                             print("file deleted")
+                            return None
                         else:
                             print("file not found")
+
+        
 
 
     #show Graph ranking by pyqchart
