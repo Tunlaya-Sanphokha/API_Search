@@ -1,5 +1,3 @@
-# Refference https://www.youtube.com/watch?v=jJz3zADv0nU&t=2s
-# Refference https://www.qtcentre.org/threads/68409-Save-QChartView-as-PNG
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtChart import*
@@ -17,11 +15,10 @@ from itertools import chain
 from nltk import NaiveBayesClassifier as nbc
 from geopy.geocoders import Nominatim
 import plotly.express as px
-
+import pickle 
 
 from API import *
 from NLP import *
-#from Combine_GUI import*
 
 class Progress(QThread): # Class progress bar
     
