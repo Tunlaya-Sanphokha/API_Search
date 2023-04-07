@@ -1,5 +1,3 @@
-# Refference https://www.youtube.com/watch?v=jJz3zADv0nU&t=2s
-# Refference https://www.qtcentre.org/threads/68409-Save-QChartView-as-PNG
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtChart import*
@@ -17,11 +15,10 @@ from itertools import chain
 from nltk import NaiveBayesClassifier as nbc
 from geopy.geocoders import Nominatim
 import plotly.express as px
-import pickle
+import pickle 
 
 from API import *
 from NLP import *
-#from Combine_GUI import*
 
 class Progress(QThread): # Class progress bar
     
@@ -44,7 +41,6 @@ class API_thread(QObject): # Class progress bar
     signal2 = pyqtSignal(object)
     signal3 = pyqtSignal(str,int,int,int,int)
     signal4 = pyqtSignal(str)
-    signal5 = pyqtSignal(str)
     finished = pyqtSignal()
     
     def __init__(self,data,slide,date1,date2):
@@ -141,13 +137,9 @@ class API_thread(QObject): # Class progress bar
 
         geolocator = Nominatim(user_agent="sample app")
         headers = ['Address', 'Lat', 'Lon']
-        file_name = 'C:\\Users\\non42\\Documents\\GitHub\\API_Search\\' + str(self.data)+'_map.csv'
-        a=0
+        file_name = 'C:\\Users\\User\\Documents\\GitHub\\API_Search\\' + str(self.data)+'_map.csv'
+
         for i in self.df['places']:
-            a+=1
-            if a == 50:
-                break
-        
             try:
                 if str(i) != 'nan':
                     data = geolocator.geocode(str(i))  #วาดแมพ
@@ -160,7 +152,7 @@ class API_thread(QObject): # Class progress bar
                     article = (i, data.point.latitude, data.point.longitude)
                     writer.writerow( {'Address':article[0], 'Lat':article[1], 'Lon':article[2]} )
                     csvfile.close()
-                    print("Drawmap")
+                    print("2")
 
             except FileNotFoundError:
                 csvfile = open(file_name, 'w', newline='', encoding='utf-8')
@@ -169,15 +161,13 @@ class API_thread(QObject): # Class progress bar
                 article = (i, data.point.latitude, data.point.longitude)
                 writer.writerow( {'Address':article[0], 'Lat':article[1], 'Lon':article[2]} )
                 csvfile.close()
-                print("ERROR Not Found Drawmap")
+                print("1")
 
             except AttributeError:
-                print('ERROR Attribute')
+                print('3')
                 pass
         try:
-            print("Doing")
-            df = pandas.read_csv('C:\\Users\\non42\\Documents\\GitHub\\API_Search\\' + str(self.data)+'_map.csv')
-            #df = pandas.read_csv('C:\\Users\\non42\\Documents\\GitHub\\API_Search\\Tesla_map copy.csv')
+            df = pandas.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\' + str(self.data)+'_map.csv')
             fig = px.scatter_geo(df, 
                                 # longitude is taken from the df["lon"] columns and latitude from df["lat"]
                                 lon="Lon", 
@@ -198,18 +188,17 @@ class API_thread(QObject): # Class progress bar
             fig.update_geos(fitbounds="locations", showcountries = True)
             # add title
             fig.update_layout(title = 'Your customers')
-            fig.write_image(f"C:/Users/non42/Documents/GitHub/API_Search/{self.data}_map.png")
-            print("Done")
-            self.signal5.emit(self.data)
+            fig.write_image(f"C:/Users/User/Documents/GitHub/API_Search/{self.data}_map.png")
+            self.signal4.emit(self.data)
         except FileNotFoundError:
             pass
-    
+        
     
     def get_time(self): # Function Get time from dateEdit
         day_1,day_2 = str(self.date1.day), str(self.date2.day)
         month1,month2 = str(self.date1.month), str(self.date2.month)
         year1, year2 = str(self.date1.year), str(self.date2.year)
-        pan = pandas.read_csv('C:\\Users\\non42\\Documents\\GitHub\\API_Search\\Data\\' + str(self.data)+'_Data.csv')
+        pan = pandas.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\' + str(self.data)+'_Data.csv')
         
         if len(day_1) == 1:
             day_1 = '0' + day_1
@@ -266,7 +255,7 @@ class tweety_search(QWidget):
         self.worker.signal1.connect(self.Link)
         self.worker.signal2.connect(self.Link2)
         self.worker.signal3.connect(self.Link3)
-        self.worker.signal5.connect(self.Link5)
+        self.worker.signal4.connect(self.Link4)
         self.button.setEnabled(False)
 
         self.thread.start()
@@ -442,9 +431,6 @@ class tweety_search(QWidget):
         model = pandasModel(df)
         self.view.setModel(model)
         self.pbar.setValue(80)
-        #self.pbar.setValue(100)
-        self.pbar.setValue(0)
-        self.button.setEnabled(True)
     
     def Link3(self,data,pos,neg,neu,tol):
         se = QPieSeries()
@@ -467,8 +453,8 @@ class tweety_search(QWidget):
         chartview.setRenderHint(QPainter.Antialiasing)
 
         self.savepi = QPixmap(chartview.grab())
-        self.savepi.save("C:/Users/non42/Documents/GitHub/API_Search/Sentiment_api.png", "PNG")
-        self.bro5.setStyleSheet('border-image:url(C:/Users/non42/Documents/GitHub/API_Search/Sentiment_api.png);')
+        self.savepi.save("C:/Users/User/Documents/GitHub/API_Search/Sentiment_api.png", "PNG")
+        self.bro5.setStyleSheet('border-image:url(C:/Users/User/Documents/GitHub/API_Search/Sentiment_api.png);')
 
         with open(str(data)+'_api_sentiment.csv', 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
@@ -476,22 +462,16 @@ class tweety_search(QWidget):
             writer.writerow([pos,neg,neu])
         
 
-    def Link5(self,name):  #link map
-        self.map.setStyleSheet(f'border-image:url(C:/Users/non42/Documents/GitHub/API_Search/{name}_map.png);')
+    def Link4(self,name):  #link map
+        self.map.setStyleSheet(f'border-image:url(C:/Users/User/Documents/GitHub/API_Search/{name}_map.png);')
         self.pbar.setValue(100)
-        #time.sleep(1)
         self.pbar.setValue(0)
         self.button.setEnabled(True)
-    
-    #show Top 10 Treand   Link with Top Treand
-    def Link4(self): 
-        self.read_file_TopTreand()
-        self.pbar.setValue(20) 
     
     #10 Ranking word
     def read_file_10rank(self,query):
         self.dic10={}
-        df = pandas.read_csv('C:\\Users\\non42\\Documents\\GitHub\\API_Search\\Data\\'+ str(query)+'_NLP.csv')
+        df = pandas.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+ str(query)+'_NLP.csv')
         for colume in df:
             self.dic10[colume]=[]
             for data in df[colume]:
@@ -505,7 +485,7 @@ class tweety_search(QWidget):
     def read_file_TopTreand(self):
         up_top = Twitter_API("","","2023-03-04","2023-03-07")
         up_top.TopTreand()
-        pannie = pandas.read_csv('C:\\Users\\non42\\Documents\\GitHub\\API_Search\\Data\\10_TopTreand.csv')
+        pannie = pandas.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\10_TopTreand.csv')
         self.bro1.clear()
         for i in pannie["name"]:
             self.bro1.append(i)
@@ -513,8 +493,8 @@ class tweety_search(QWidget):
     #Remove 
     def remove_word(self):
         file = str(self.inputbox.text())
-        data_path = ('C:\\Users\\non42\\Documents\\GitHub\\API_Search\\Data\\' + str(file)+'_Data.csv')
-        NLP_path = ('C:\\Users\\non42\\Documents\\GitHub\\API_Search\\Data\\' + str(file)+'_NLP.csv')
+        data_path = ('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\' + str(file)+'_Data.csv')
+        NLP_path = ('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\' + str(file)+'_NLP.csv')
         with open('file_list_API.csv', 'rt', encoding='utf-8') as f:
             reader = csv.reader(f, delimiter=',')
             for row in reader:
@@ -524,18 +504,21 @@ class tweety_search(QWidget):
                         print(df)
                         df1 = df.drop(df[df['file_name'] == field].index, inplace=False)
                         result = df1.to_csv("file_list_API.csv", index=False)
-                        print(df1)    
+                        print(result)    
                         if(os.path.exists(data_path) and os.path.isfile(data_path) and os.path.exists(NLP_path) and os.path.isfile(NLP_path)):
                             os.remove(data_path)
                             os.remove(NLP_path)
                             print("file deleted")
+                            return None
                         else:
                             print("file not found")
+
+        
 
 
     #show Graph ranking by pyqchart
     def create_piechart(self,data):
-        pan = pandas.read_csv('C:\\Users\\non42\\Documents\\GitHub\\API_Search\\Data\\'+ str(data)+'_NLP.csv')
+        pan = pandas.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+ str(data)+'_NLP.csv')
         se = QPieSeries()
         for i,j in zip(pan['10 ranking'],pan['number']):
             se.append(i,int(j))
@@ -549,8 +532,8 @@ class tweety_search(QWidget):
         chartview.setRenderHint(QPainter.Antialiasing)
 
         self.savepi = QPixmap(chartview.grab())
-        self.savepi.save("C:/Users/non42/Documents/GitHub/API_Search/10_Rank_API.png", "PNG")
-        self.bro3.setStyleSheet('border-image:url(C:/Users/non42/Documents/GitHub/API_Search/10_Rank_API.png);')
+        self.savepi.save("C:/Users/User/Documents/GitHub/API_Search/10_Rank_API.png", "PNG")
+        self.bro3.setStyleSheet('border-image:url(C:/Users/User/Documents/GitHub/API_Search/10_Rank_API.png);')
 
     #Show and Exit
     def show_exit(self):
