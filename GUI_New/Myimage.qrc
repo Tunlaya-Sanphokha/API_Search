@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="image">
+    <file>Twitter-logo.svg.png</file>
+    <file>Untitled.png</file>
+  </qresource>
+</RCC>

@@ -31,7 +31,7 @@ class Twitter_API():
         #self.api = tweepy.API(self.auth,wait_on_rate_limit=True)
         # Write file .csv for checking and record infor
         fieldnames = ['time', 'places', 'tweet']
-        self.csvfile = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+ str(query)+'_Data.csv', 'a', newline='', encoding="utf-8")
+        self.csvfile = open('C:\\Users\\non42\\Documents\\GitHub\\API_Search\\Data\\'+ str(query)+'_Data.csv', 'a', newline='', encoding="utf-8")
         self.writer = csv.DictWriter( self.csvfile, fieldnames=fieldnames )
         self.writer.writeheader()
 
@@ -106,7 +106,7 @@ class Twitter_API():
         woeid = 23424960
         trends = api.trends_place(woeid)
         fieldnames = ['tweet_volume', 'url', 'query', 'name', 'promoted_content']
-        csvfile_output = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\10_TopTreand.csv', 'w', newline='', encoding="utf-8")
+        csvfile_output = open('C:\\Users\\non42\\Documents\\GitHub\\API_Search\\Data\\10_TopTreand.csv', 'w', newline='', encoding="utf-8")
         writer_output = csv.DictWriter(csvfile_output, fieldnames=fieldnames )
         writer_output.writeheader()
         for value in trends:

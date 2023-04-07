@@ -29,11 +29,11 @@ class NLP:
 
     #select th or en word to analysis and count them
     def save_analysis(self, lang, data,since,until):
-        self.csvfile_input = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(data)+'_Data.csv', 'r',newline='', encoding="utf-8")
+        self.csvfile_input = open('C:\\Users\\non42\\Documents\\GitHub\\API_Search\\Data\\'+str(data)+'_Data.csv', 'r',newline='', encoding="utf-8")
         self.csv_reader = csv.reader(self.csvfile_input, delimiter=',')
             
         fieldnames = ['10 ranking','number']
-        self.csvfile_output = open('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\'+str(data)+'_NLP.csv', 'w', newline='', encoding="utf-8")
+        self.csvfile_output = open('C:\\Users\\non42\\Documents\\GitHub\\API_Search\\Data\\'+str(data)+'_NLP.csv', 'w', newline='', encoding="utf-8")
         self.writer_output = csv.DictWriter( self.csvfile_output, fieldnames=fieldnames )
         self.writer_output.writeheader()
 
@@ -194,7 +194,7 @@ class NLP:
                         # if you want dates in string format then convert it into string
                         time2 = date_list.strftime("%Y-%m-%d")
 
-                        pan = pd.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\Data\\' + str(data)+'_Data.csv')
+                        pan = pd.read_csv('C:\\Users\\non42\\Documents\\GitHub\\API_Search\\Data\\' + str(data)+'_Data.csv')
                         colume1 = pan['time'] >= f'{since} 00:00:00'
                         colume2 = pan['time'] <= f'{until} 23:59:59'
                         between = pan[colume1 & colume2]
