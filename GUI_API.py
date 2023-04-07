@@ -41,6 +41,7 @@ class API_thread(QObject): # Class progress bar
     signal2 = pyqtSignal(object)
     signal3 = pyqtSignal(str,int,int,int,int)
     signal4 = pyqtSignal(str)
+    signal5 = pyqtSignal(str)
     finished = pyqtSignal()
     
     def __init__(self,data,slide,date1,date2):
@@ -138,8 +139,11 @@ class API_thread(QObject): # Class progress bar
         geolocator = Nominatim(user_agent="sample app")
         headers = ['Address', 'Lat', 'Lon']
         file_name = 'C:\\Users\\User\\Documents\\GitHub\\API_Search\\' + str(self.data)+'_map.csv'
-
+        map_count = 0
         for i in self.df['places']:
+            map_count+=1
+            if map_count == 50:
+                break
             try:
                 if str(i) != 'nan':
                     data = geolocator.geocode(str(i))  #วาดแมพ
@@ -152,7 +156,7 @@ class API_thread(QObject): # Class progress bar
                     article = (i, data.point.latitude, data.point.longitude)
                     writer.writerow( {'Address':article[0], 'Lat':article[1], 'Lon':article[2]} )
                     csvfile.close()
-                    print("2")
+                    print("Drawmap")
 
             except FileNotFoundError:
                 csvfile = open(file_name, 'w', newline='', encoding='utf-8')
@@ -161,10 +165,10 @@ class API_thread(QObject): # Class progress bar
                 article = (i, data.point.latitude, data.point.longitude)
                 writer.writerow( {'Address':article[0], 'Lat':article[1], 'Lon':article[2]} )
                 csvfile.close()
-                print("1")
+                print("ERROR Not Found Drawmap")
 
             except AttributeError:
-                print('3')
+                print('ERROR Attribute')
                 pass
         try:
             df = pandas.read_csv('C:\\Users\\User\\Documents\\GitHub\\API_Search\\' + str(self.data)+'_map.csv')
@@ -180,7 +184,7 @@ class API_thread(QObject): # Class progress bar
                                 hover_data = {"Address":False,
                                             "Lon": False,
                                             "Lat": False})
-
+            print("Doing")
             # scatter_geo allow to change the map date based on the information from the df dataframe, but we can separately specify the values that are common to all
             # change the size of the markers to 25 and color to red
             fig.update_traces(marker=dict(size=25, color="red"))
@@ -189,7 +193,8 @@ class API_thread(QObject): # Class progress bar
             # add title
             fig.update_layout(title = 'Your customers')
             fig.write_image(f"C:/Users/User/Documents/GitHub/API_Search/{self.data}_map.png")
-            self.signal4.emit(self.data)
+            self.signal5
+            .emit(self.data)
         except FileNotFoundError:
             pass
         
@@ -256,6 +261,7 @@ class tweety_search(QWidget):
         self.worker.signal2.connect(self.Link2)
         self.worker.signal3.connect(self.Link3)
         self.worker.signal4.connect(self.Link4)
+        self.worker.signal5.connect(self.Link5)
         self.button.setEnabled(False)
 
         self.thread.start()
@@ -464,7 +470,7 @@ class tweety_search(QWidget):
 
     def Link4(self,name):  #link map
         self.map.setStyleSheet(f'border-image:url(C:/Users/User/Documents/GitHub/API_Search/{name}_map.png);')
-        self.pbar.setValue(100)
+        #self.pbar.setValue(100)
         self.pbar.setValue(0)
         self.button.setEnabled(True)
     
